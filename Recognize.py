@@ -1,11 +1,6 @@
-import face_recognition
 from imutils import paths
-import pickle
-import time
-import cv2
-import os
+import os, cv2, pickle, face_recognition
 from piservo import Servo
-
 
 """
 Servo Control - https://pypi.org/project/piServoCtl/
@@ -42,14 +37,13 @@ def configure():
     f.write(pickle.dumps(data))
     f.close()
 
-def main(servo_GPIO: int, allowedIn: list[str]):
+def main(allowedIn: list[str]):
     #find path of xml file containing haarcascade file 
     cascPathface = 'haarcascade_frontalface_default.xml'
     # load the harcaascade in the cascade classifier
     faceCascade = cv2.CascadeClassifier(cascPathface)
     # load the known faces and embeddings saved in last file
     data = pickle.loads(open('face_enc', "rb").read())
-    servo = Servo(servo_GPIO)
     print("Streaming started")
     video_capture = cv2.VideoCapture(0)
     # loop over frames from the video file stream
@@ -105,9 +99,6 @@ def main(servo_GPIO: int, allowedIn: list[str]):
                 0.75, (0, 255, 0), 2)
                 if(name in allowedIn):
                     print("Welcome " + name)
-                    servo.write(90)
-                    time.sleep(1)
-                    servo.write(0)
                 else:
                     print("Access Denied")
         cv2.imshow("Frame", frame)
@@ -117,4 +108,4 @@ def main(servo_GPIO: int, allowedIn: list[str]):
     cv2.destroyAllWindows()
     
 #configure()
-main(17, ['John'])
+main(['Person1'])
